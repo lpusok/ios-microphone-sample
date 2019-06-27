@@ -7,15 +7,74 @@
 //
 
 import UIKit
+import AVFoundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var recorder: AVAudioRecorder?
+    
+    func testRecording() {
+        
+        //        let recordExpectation = expectation(description: "Record")
+        
+        let recordSettings = [
+            // AVFormatIDKey: NSNumber(unsignedInt:kAudioFormatLinearPCM),
+            AVNumberOfChannelsKey: 1,
+            AVSampleRateKey : 16000.0
+        ]
+        
+        let dirsPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let docsDir = dirsPaths[0] as String
+        let soundFilePath = docsDir + "/test.wav"
+        
+        print("Saving recorded audio file in \(soundFilePath)")
+        AVAudioSession.sharedInstance().requestRecordPermission({(granted: Bool) -> Void
+            in
+            if granted {
+                let soundFileURL = URL(string: soundFilePath)
+                
+                if let soundFileURL = soundFileURL {
+                    
+                    do {
+                        
+                        self.recorder = try AVAudioRecorder(url: soundFileURL, settings: recordSettings)
+                        
+                        self.recorder!.isMeteringEnabled = true
+                        
+                        // self.recorder.prepareToRecord()
+                        self.recorder!.record(forDuration: 3.0)
+                        
+                        sleep(5)
+                        
+                        print(self.recorder!.isRecording)
+                        
+                        self.recorder!.stop()
+                        
+                        //                        recordExpectation.fulfill()
+                        
+                    } catch {
+                        
+                        
+                        //                        XCTAssertTrue(false, "Could not create audio recorder")
+                    }
+                }
+                
+            }
+            
+        })
+        
+//        waitForExpectationsWithTimeout(timeout) {
+//            error in XCTAssertNil(error, "Timeout")
+//        }
+    }
+    
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        testRecording()
         return true
     }
 
@@ -43,4 +102,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
+
+
 
