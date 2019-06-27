@@ -74,7 +74,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        testRecording()
+//        testRecording()
+        
+        AVAudioSession.sharedInstance().requestRecordPermission({(granted: Bool) -> Void
+            in
+            if granted {
+                print("Mic permission granted")
+            } else {
+                print("Mic permission denied")
+            }
+        })
         return true
     }
 
